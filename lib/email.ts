@@ -2,7 +2,7 @@ import nodemailer from "nodemailer";
 import { getSettings } from "./db";
 
 export async function sendBookingEmail(booking: any) {
-  const s = getSettings();
+  const s = await getSettings();
 
   const to =
     process.env.BOOKING_EMAIL ||

@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    const id = createBooking({
+    const id = await createBooking({
       customer_name: String(b.name),
       phone: String(b.phone),
       pickup: String(b.pickup),
@@ -45,7 +45,9 @@ export async function POST(req: NextRequest) {
       notes: b.notes || "",
     });
 
-    const booking = listBookings().find(
+    const bookings = await listBookings();
+
+    const booking = bookings.find(
       (x: any) => x.id === id
     );
 
@@ -65,11 +67,13 @@ export async function POST(req: NextRequest) {
     };
 
     try {
+      const settings = await getSettings();
+
       emailResult = await sendBookingEmail({
         ...booking,
         currency:
           process.env.CURRENCY ||
-          getSettings().currency ||
+          settings.currency ||
           "€",
       });
 
