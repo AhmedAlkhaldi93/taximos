@@ -810,11 +810,10 @@ export default function Home({ settings: s }: { settings: S }) {
               <Contact
                 icon={<MessageCircle />}
                 title="WhatsApp"
-                text={`+${s.whatsapp}`}
-                href={`https://wa.me/${s.whatsapp}`}
+                text={`+${String(s.whatsapp).replace(/\D/g, "")}`}
+                href={`https://wa.me/${String(s.whatsapp).replace(/\D/g, "")}`}
               />
             )}
-
             {s.email && (
               <Contact
                 icon={<Send />}
