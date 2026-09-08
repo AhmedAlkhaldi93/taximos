@@ -272,7 +272,8 @@ export default function Home({ settings: s }: { settings: S }) {
         body: JSON.stringify({
           origin: pp.placeId,
           destination: dp.placeId,
-          intermediates: stops.filter(Boolean).map((stop) => ({ placeId: stop.placeId })),
+          intermediates: stops
+          .filter((stop): stop is P => stop !== null).map((stop) => ({ placeId: stop.placeId })),
         }),
       });
 
