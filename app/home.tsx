@@ -273,7 +273,8 @@ export default function Home({ settings: s }: { settings: S }) {
           origin: pp.placeId,
           destination: dp.placeId,
           intermediates: stops
-          .filter((stop): stop is P => stop !== null).map((stop) => ({ placeId: stop.placeId })),
+          .filter((stop): stop is P => stop !== null)
+          .map((stop) => ({ placeId: stop.placeId })),
         }),
       });
 
@@ -359,9 +360,13 @@ export default function Home({ settings: s }: { settings: S }) {
           ...form,
           pickup,
           destination,
-          stops: stops.filter(Boolean).map((stop) => stop.text),
-          stop_place_ids: stops.filter(Boolean).map((stop) => stop.placeId),
-          distance_km: distance,
+          stops: stops
+            .filter((stop): stop is P => stop !== null)
+            .map((stop) => stop.text),
+          stop_place_ids: stops
+            .filter((stop): stop is P => stop !== null)
+            .map((stop) => stop.placeId),
+            distance_km: distance,
           duration_min: duration,
           price,
         }),
