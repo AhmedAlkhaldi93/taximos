@@ -14,6 +14,16 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid email address" }, { status: 400 });
     }
 
+    if (
+      b.passengers === undefined ||
+      b.passengers === null ||
+      b.passengers === "" ||
+      !Number.isInteger(Number(b.passengers)) ||
+      Number(b.passengers) < 1
+    ) {
+      return NextResponse.json({ error: "Number of passengers must be a positive whole number." }, { status: 400 });
+    }
+
     if (Array.isArray(b.stops) && b.stops.length > 5) {
       return NextResponse.json({ error: "A maximum of 5 stops is allowed." }, { status: 400 });
     }
@@ -50,6 +60,7 @@ export async function POST(req: NextRequest) {
       customer_name: String(b.name),
       phone: String(b.phone),
       customer_email: String(b.email),
+      passengers: Number(b.passengers),
       pickup: String(b.pickup),
       destination: String(b.destination),
       stops: Array.isArray(b.stops) ? b.stops.map(String) : [],

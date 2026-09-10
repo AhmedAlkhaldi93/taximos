@@ -30,6 +30,7 @@ async function initDb() {
       customer_name TEXT NOT NULL,
       phone TEXT NOT NULL,
       customer_email TEXT,
+      passengers INTEGER NOT NULL DEFAULT 1,
       pickup TEXT NOT NULL,
       destination TEXT NOT NULL,
       stops_json TEXT,
@@ -43,6 +44,7 @@ async function initDb() {
     );
 
     ALTER TABLE bookings ADD COLUMN IF NOT EXISTS customer_email TEXT;
+    ALTER TABLE bookings ADD COLUMN IF NOT EXISTS passengers INTEGER NOT NULL DEFAULT 1;
     ALTER TABLE bookings ADD COLUMN IF NOT EXISTS stops_json TEXT;
 
     CREATE TABLE IF NOT EXISTS reviews (
@@ -140,6 +142,7 @@ export async function createBooking(d: any) {
       customer_name,
       phone,
       customer_email,
+      passengers,
       pickup,
       destination,
       stops_json,
@@ -151,7 +154,7 @@ export async function createBooking(d: any) {
       status,
       completed_at
     )
-    VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)
+    VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)
     RETURNING id
     `,
     [
@@ -159,6 +162,7 @@ export async function createBooking(d: any) {
       d.customer_name,
       d.phone,
       d.customer_email || null,
+      d.passengers,
       d.pickup,
       d.destination,
       JSON.stringify(d.stops || []),

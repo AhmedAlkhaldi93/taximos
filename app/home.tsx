@@ -53,6 +53,7 @@ const T: any = {
     booking: "Reserveer je rit",
     name: "Naam",
     phone: "Telefoonnummer",
+    passengers: "Aantal passagiers",
     date: "Datum en tijd",
     notes: "Opmerking",
     confirm: "Reservering versturen",
@@ -89,6 +90,7 @@ const T: any = {
     booking: "Réservez votre trajet",
     name: "Nom",
     phone: "Téléphone",
+    passengers: "Nombre de passagers",
     date: "Date et heure",
     notes: "Remarque",
     confirm: "Envoyer la réservation",
@@ -124,6 +126,7 @@ const T: any = {
     booking: "Book your trip",
     name: "Name",
     phone: "Phone number",
+    passengers: "Number of passengers",
     date: "Date & time",
     notes: "Notes",
     confirm: "Send booking",
@@ -177,6 +180,7 @@ export default function Home({ settings: s }: { settings: S }) {
     name: "",
     phone: "",
     email: "",
+    passengers: "1",
     scheduled_at: "",
     notes: "",
   });
@@ -336,13 +340,21 @@ export default function Home({ settings: s }: { settings: S }) {
       return;
     }
 
-    if (!form.name.trim() || !form.phone.trim() || !form.email.trim() || !form.scheduled_at) {
+    if (
+      !form.name.trim() ||
+      !form.phone.trim() ||
+      !form.email.trim() ||
+      !form.scheduled_at ||
+      !form.passengers ||
+      Number(form.passengers) < 1 ||
+      !Number.isInteger(Number(form.passengers))
+    ) {
       setMsg(
         lang === "nl"
-          ? "Vul naam, telefoonnummer en datum/tijd in."
+          ? "Vul naam, telefoonnummer, aantal passagiers en datum/tijd in."
           : lang === "fr"
-          ? "Veuillez remplir le nom, le téléphone, l’e-mail et la date/heure."
-          : "Please fill in name, phone number, email and date/time."
+          ? "Veuillez remplir le nom, le téléphone, le nombre de passagers, l’e-mail et la date/heure."
+          : "Please fill in name, phone number, number of passengers, email and date/time."
       );
       return;
     }
@@ -358,6 +370,7 @@ export default function Home({ settings: s }: { settings: S }) {
         },
         body: JSON.stringify({
           ...form,
+          passengers: Number(form.passengers),
           pickup,
           destination,
           stops: stops
@@ -384,6 +397,7 @@ export default function Home({ settings: s }: { settings: S }) {
         name: "",
         phone: "",
         email: "",
+        passengers: "1",
         scheduled_at: "",
         notes: "",
       });
@@ -778,6 +792,20 @@ export default function Home({ settings: s }: { settings: S }) {
                 />
 
                 <Field
+                  label={t.passengers}
+                  type="number"
+                  value={form.passengers}
+                  onChange={(value) =>
+                    setForm({
+                      ...form,
+                      passengers: value,
+                    })
+                  }
+                  min="1"
+                  step="1"
+                />
+
+                <Field
                   label={t.date}
                   type="datetime-local"
                   value={form.scheduled_at}
@@ -1115,6 +1143,8 @@ function Field({
   placeholder,
   type = "text",
   required = true,
+  min,
+  step,
 }: {
   label: string;
   value: string;
@@ -1122,6 +1152,8 @@ function Field({
   placeholder?: string;
   type?: string;
   required?: boolean;
+  min?: string | number;
+  step?: string | number;
 }) {
   return (
     <label className="block">
@@ -1132,6 +1164,8 @@ function Field({
       <input
         required={required}
         type={type}
+        min={min}
+        step={step}
         value={value}
         placeholder={placeholder}
         onChange={(e) =>
